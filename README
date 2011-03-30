@@ -1,0 +1,21 @@
+RGB Matrix Clock
+
+MPLAB X project for Microchip 18f45j10,
+DS1307 & Paeae 595 matrix kit based clock.
+
+The code is for clock contains following components:
+
+- 2 pieces of 8x8 RGB LED matrix
+  (http://kits.paeae.com/595matrix/)
+
+- DS1307 RTC with On-Board battery back-up
+  (http://www.futurlec.com/Mini_DS1307.shtml)
+
+- Board with 18f45j10, 10MHz crystal, 3.3V regulator
+
+- 5V regulated power supply (for LED matrix, 3V3 regulator)
+
+No schematics available, HW connections:
+
+Two Paeae matrix kits chained, connected to SPI1 of 18F45j10,
+DS1307 connected to I2C2 of 18f45j10.

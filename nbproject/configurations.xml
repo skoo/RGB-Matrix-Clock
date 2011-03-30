@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <itemPath>calendar.h</itemPath>
+      <itemPath>rgbmatrix.h</itemPath>
+      <itemPath>rtc.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="LibraryFiles"
+                   displayName="Library Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="LinkerScript"
+                   displayName="Linker Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="ObjectFiles"
+                   displayName="Object Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>calendar.c</itemPath>
+      <itemPath>isr.asm</itemPath>
+      <itemPath>main.c</itemPath>
+      <itemPath>rgbmatrix.c</itemPath>
+      <itemPath>rgbmatrix_digits.c</itemPath>
+      <itemPath>rtc.c</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="default" type="2">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <targetDevice>PIC18F45J10</targetDevice>
+        <targetHeader></targetHeader>
+        <platformTool>PICkit3PlatformTool</platformTool>
+        <languageToolchain>C18</languageToolchain>
+        <compilerSet>C18</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+      <C18>
+        <property key="storage-class" value="sca"/>
+        <property key="enable-opa" value="false"/>
+        <property key="enable-all-optimizations" value="true"/>
+        <property key="preprocessor-macros" value=""/>
+        <property key="default-char-unsigned" value="false"/>
+        <property key="optimization-master" value="Custom"/>
+        <property key="code-model" value="ml"/>
+        <property key="warning-level" value="2"/>
+        <property key="extra-include-directories" value="..;../i2c"/>
+        <property key="enable-ow" value="true"/>
+        <property key="verbose" value="false"/>
+        <property key="enable-ou" value="false"/>
+        <property key="enable-ot" value="false"/>
+        <property key="enable-os" value="true"/>
+        <property key="data-model" value="oa-"/>
+        <property key="enable-or" value="false"/>
+        <property key="enable-op" value="false"/>
+        <property key="enable-on" value="true"/>
+        <property key="enable-om" value="true"/>
+        <property key="procedural-abstraction-passes" value="0"/>
+        <property key="enable-multi-bank-stack-model" value="false"/>
+        <property key="enable-int-promotion" value="false"/>
+        <property key="enable-od" value="false"/>
+        <property key="enable-ob" value="false"/>
+      </C18>
+      <C18-AS>
+        <property key="default.radix" value="HEX"/>
+        <property key="hex.output.format" value="INHX32"/>
+        <property key="enable.case.sensitivity" value="false"/>
+        <property key="preprocessor.macros" value=""/>
+        <property key="warning.level" value="0"/>
+        <property key="cross.reference.file" value=""/>
+      </C18-AS>
+      <C18-LD>
+        <property key="hex-output-format" value="INHX32"/>
+        <property key="map-file" value=""/>
+        <property key="generate-cod" value="false"/>
+        <property key="extra-lib-directories" value="/opt/microchip/mplabc18/v3.36/lib"/>
+      </C18-LD>
+      <C18LanguageToolchain>
+        <property key="stack-analysis-mplink" value="false"/>
+        <property key="stack-analysis-mcc18" value="false"/>
+        <property key="stack-analysis" value="false"/>
+        <property key="extended-mode-mcc18" value="false"/>
+        <property key="extended-mode" value="false"/>
+        <property key="extended-mode-mpasm" value="false"/>
+        <property key="extended-mode-mplink" value="false"/>
+      </C18LanguageToolchain>
+      <PICkit3PlatformTool>
+        <property key="programoptions.preserveprogramrange" value="false"/>
+        <property key="memories.eeprom" value="false"/>
+        <property key="programoptions.preserveeeprom" value="false"/>
+        <property key="voltagevalue" value="3.25"/>
+        <property key="AutoSelectMemRanges" value="auto"/>
+        <property key="programoptions.preserveprogramrange.start" value="0x0"/>
+        <property key="programoptions.preserveprogramrange.end" value="0x3f"/>
+        <property key="memories.programmemory.start" value="0x0"/>
+        <property key="programoptions.usehighvoltageonmclr" value="false"/>
+        <property key="memories.id" value="false"/>
+        <property key="memories.programmemory.end" value="0x7ff7"/>
+        <property key="Freeze Peripherals" value="true"/>
+        <property key="memories.programmemory" value="true"/>
+        <property key="SecureSegment.SegmentProgramming" value="FullChipProgramming"/>
+        <property key="poweroptions.powerenable" value="false"/>
+        <property key="programoptions.eraseb4program" value="true"/>
+      </PICkit3PlatformTool>
+    </conf>
+  </confs>
+</configurationDescriptor>
