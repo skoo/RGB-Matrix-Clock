@@ -1,3 +1,23 @@
+/**
+ * Copyright (C) 2011 by Saku Kekkonen
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 #include <p18cxxx.h>
 #include <delays.h>
@@ -24,7 +44,7 @@
 #define RGB_DATE_SEC_BACKGROUND RGB(1,0,1)
 #define RGB_DATE_DOT		RGB(1,0,1)
 
-#define SET_CLOCK
+// #define SET_CLOCK
 
 #define RGB(r,g,b) ((r<<2)|(g<<1)|b)
 
@@ -41,6 +61,8 @@ void interrupt_at_high_vector(void)
 void main(void)
 {
 	unsigned char last_sec = 0x60;
+
+	OSCTUNEbits.PLLEN = 1;
 
 #if defined(SET_CLOCK)
 	/* No method for setting rtc at run time.
@@ -72,8 +94,6 @@ void main(void)
 
 	INTCONbits.GIE = 1;
 	INTCONbits.PEIE = 1;
-
-	OSCTUNEbits.PLLEN = 1;
 
 	matrix_start();
 
