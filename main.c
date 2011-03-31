@@ -24,7 +24,7 @@
 #define RGB_DATE_SEC_BACKGROUND RGB(1,0,1)
 #define RGB_DATE_DOT		RGB(1,0,1)
 
-// #define SET_CLOCK
+#define SET_CLOCK
 
 #define RGB(r,g,b) ((r<<2)|(g<<1)|b)
 
@@ -50,10 +50,10 @@ void main(void)
 
 	static const unsigned char rtcdata[8] = {
 		0x00, // sec
-		0x23, // min
-		0x40 | 0x20, // hour (24 hour format)
-		0x03, // day of week (01-07, 1=monday)
-		0x30, // date
+		0x42, // min
+		0x14, // hour (24 hour format)
+		0x05, // day of week (01-07, 1=monday)
+		0x31, // date
 		0x03, // month
 		0x11, // year
 	};
