@@ -10,8 +10,8 @@ static unsigned char rtc[8];
 
 void rtc_init(void)
 {
-	TRISDbits.TRISD5 = 1;
-	TRISDbits.TRISD6 = 1;
+	TRISDbits.TRISD0 = 1;	// SCL2
+	TRISDbits.TRISD1 = 1;	// SDA2
 
 	OpenI2C2(MASTER, SLEW_OFF);
 
