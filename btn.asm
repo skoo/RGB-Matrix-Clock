@@ -58,9 +58,9 @@ button_irq
 	movwf	TMR0L
 	bcf	INTCON, TMR0IF
 
-	btfss	PORTB, 1
-	incf	btn_dec_count
 	btfss	PORTB, 4
+	incf	btn_dec_count
+	btfss	PORTB, 1
 	incf	btn_inc_count
 
 	decfsz	debounce_counter
