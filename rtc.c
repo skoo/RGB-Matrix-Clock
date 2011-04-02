@@ -6,7 +6,7 @@
 #include <p18cxxx.h>
 #include <i2c.h>
 
-static unsigned char rtc[8];
+unsigned char rtc[8];
 
 void rtc_init(void)
 {
@@ -78,6 +78,18 @@ unsigned char rtc_min_bcd(void)
 unsigned char rtc_sec_bcd(void)
 {
 	return rtc[0] & 0x7f;
+}
+
+void rtc_data_set_time(unsigned char* rtcdata,
+	unsigned char hour, unsigned char min, unsigned char sec)
+{
+	rtcdata[0] &= 0x80;
+	rtcdata[0] |= DEC_TO_BCD(sec);
+
+	rtcdata[1] = DEC_TO_BCD(min);
+
+	rtcdata[2] &= 0xc0;
+	rtcdata[2] |= DEC_TO_BCD(hour);
 }
 
 void rtc_setclock(const unsigned char* rtcdata)

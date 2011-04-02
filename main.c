@@ -67,8 +67,9 @@ void interrupt_at_low_vector(void)
 
 #pragma code
 
-static void draw_digits(void);
+static void draw_digits(char force_update);
 static void draw_second_markers(void);
+static char adjust_time(void);
 
 void main(void)
 {
@@ -112,20 +113,26 @@ void main(void)
 	matrix_start();
 
 	while (rtc_update());
-	draw_digits();
+	draw_digits(1);
 	draw_second_markers();
 
 	while (1) {
 		static unsigned char last_sec = 0x60;
 
-		if (rtc_update()) {
-			continue;
-		}
-
-		if (last_sec != rtc_sec_bcd()) {
-			last_sec = rtc_sec_bcd();
-			draw_digits();
-			draw_second_markers();
+		if (adjust_time())
+		{
+			if (rtc_update() == 0) {
+				draw_digits(1);
+				draw_second_markers();
+			}
+		} else {
+			if (rtc_update() == 0) {
+				if (last_sec != rtc_sec_bcd()) {
+					last_sec = rtc_sec_bcd();
+					draw_digits(0);
+					draw_second_markers();
+				}
+			}
 		}
 	}
 }
@@ -180,7 +187,7 @@ void draw_second_markers(void)
 	}
 }
 
-void draw_digits(void)
+void draw_digits(char force_update)
 {
 	static unsigned char last_hour = 24;
 
@@ -195,7 +202,7 @@ void draw_digits(void)
 	date = BCD_TO_DEC(rtc_date_bcd());
 	hour = BCD_TO_DEC(rtc_hour_bcd());
 
-	if (hour != last_hour) {
+	if (hour != last_hour || force_update) {
 
 		if (is_summertime(year, month, date, hour, BCD_TO_DEC(rtc_day_bcd())))
 			hour += 3;
@@ -224,14 +231,14 @@ void draw_digits(void)
 
 	sec = rtc_sec_bcd();
 
-	if (sec == 0x30) {
+	if (sec == 0x30 && !force_update) {
 		/* date display mode for seconds 30..39 */
 
 		matrix_set_digit(0, RGB_DATE, date / 10);
 		matrix_set_digit(1, RGB_DATE, date % 10);
 		matrix_set_digit(2, RGB_DATE, month / 10);
 		matrix_set_digit(3, RGB_DATE, month % 10);
-	} else if (sec == 0x40 || last_hour == 24) {
+	} else if (sec == 0x40 || force_update) {
 		/* time display mode */
 		
 		matrix_set_digit(0, RGB_TIME, hour / 10);
@@ -241,4 +248,67 @@ void draw_digits(void)
 	}
 
 	last_hour = hour;
+}
+
+/**
+ * Adjust time by using dec & inc buttons.
+ *
+ * TODO: Better implementation. Does not handle calendar.
+ * only useful for adjusting clock drift, not for setting the time
+ * after changing battery.
+ *
+ * @return 1 if time was adjusted.
+ */
+char adjust_time(void)
+{
+	static unsigned char dec_len = 0;
+	static unsigned char inc_len = 0;
+
+	if (button_dec > dec_len)
+		dec_len = button_dec;
+
+	if (button_inc > inc_len)
+		inc_len = button_inc;
+
+	if (button_dec < dec_len || button_inc < inc_len) {
+		char sec = BCD_TO_DEC(rtc_sec_bcd());
+		char min = BCD_TO_DEC(rtc_min_bcd());
+		char hour = BCD_TO_DEC(rtc_hour_bcd());
+
+		if (button_dec < dec_len) {
+			sec--;
+			dec_len = 0;
+		}
+		if (button_inc < inc_len) {
+			sec++;
+			inc_len = 0;
+		}
+
+		if (sec < 0) {
+			sec = 59;
+			min--;
+			if (min < 0) {
+				min = 59;
+				hour--;
+				if (hour < 0)
+					hour = 23;
+			}
+		} else if (sec > 59) {
+			sec = 0;
+			min++;
+			if (min > 59) {
+				min = 0;
+				hour++;
+				if (hour > 23)
+					hour = 0;
+			}
+		}
+
+		rtc_data_set_time(rtc, hour, min, sec);
+		rtc_setclock(rtc);
+
+		return 1;
+	}
+
+	return 0;
 }
