@@ -67,10 +67,11 @@ void interrupt_at_low_vector(void)
 
 #pragma code
 
+static void draw_digits(void);
+static void draw_second_markers(void);
+
 void main(void)
 {
-	unsigned char last_sec = 0x60;
-
 	OSCTUNEbits.PLLEN = 1;
 
 #if defined(SET_CLOCK)
@@ -110,31 +111,91 @@ void main(void)
 
 	matrix_start();
 
+	while (rtc_update());
+	draw_digits();
+	draw_second_markers();
+
 	while (1) {
-		unsigned short year;
-		unsigned char month;
-		unsigned char date;
-		unsigned char hour;
-		unsigned char s = 0;
-		unsigned char sec;
-		unsigned char sec_color;
-		unsigned char sec_bg;
+		static unsigned char last_sec = 0x60;
 
 		if (rtc_update()) {
 			continue;
 		}
 
-		/* redraw only when time changes */
-		if (last_sec == rtc_sec_bcd())
-			continue;
+		if (last_sec != rtc_sec_bcd()) {
+			last_sec = rtc_sec_bcd();
+			draw_digits();
+			draw_second_markers();
+		}
+	}
+}
 
-		last_sec = rtc_sec_bcd();
+void draw_second_markers(void)
+{
+	unsigned char s = 0;
+	unsigned char sec;
+	unsigned char sec_color;
+	unsigned char sec_bg;
 
-		month = BCD_TO_DEC(rtc_month_bcd());
-		date = BCD_TO_DEC(rtc_date_bcd());
-		hour = BCD_TO_DEC(rtc_hour_bcd());
+	sec = rtc_sec_bcd() >> 4;
 
-		year = BCD_TO_DEC(rtc_year_bcd()) + 2000;
+	if (sec == 3) {
+		/* date display mode for seconds 30..39 */
+		matrix_dot(7, 6, RGB_DATE_DOT);
+		sec_color = RGB_DATE_SEC;
+		sec_bg = RGB_DATE_SEC_BACKGROUND;
+	} else {
+		/* time display mode */
+		if (rtc_sec_bcd() & 1) {
+			matrix_dot(7, 2, RGB_TIME_DOT);
+			matrix_dot(7, 4, RGB_TIME_DOT);
+		} else {
+			matrix_dot(7, 2, 0);
+			matrix_dot(7, 4, 0);
+		}
+
+		sec_color = RGB_TIME_SEC;
+		sec_bg = RGB_TIME_SEC_BACKGROUND;
+	}
+
+	/* draw second display lines */
+
+	while (sec > s) {
+		matrix_dot(s++, 7, sec_color);
+	}
+
+	while (s < 5) {
+		matrix_dot(s++, 7, sec_bg);
+	}
+
+	s = 6;
+	sec = (rtc_sec_bcd() & 0x0f) + 6;
+
+	while (sec > s) {
+		matrix_dot(s++, 7, sec_color);
+	}
+
+	while (s < 15) {
+		matrix_dot(s++, 7, sec_bg);
+	}
+}
+
+void draw_digits(void)
+{
+	static unsigned char last_hour = 24;
+
+	unsigned short year;
+	unsigned char month;
+	unsigned char date;
+	unsigned char hour;
+	unsigned char sec;
+
+	year = BCD_TO_DEC(rtc_year_bcd()) + 2000;
+	month = BCD_TO_DEC(rtc_month_bcd());
+	date = BCD_TO_DEC(rtc_date_bcd());
+	hour = BCD_TO_DEC(rtc_hour_bcd());
+
+	if (hour != last_hour) {
 
 		if (is_summertime(year, month, date, hour, BCD_TO_DEC(rtc_day_bcd())))
 			hour += 3;
@@ -159,51 +220,25 @@ void main(void)
 			matrix_brightness = (24-hour) * 2;
 		else
 			matrix_brightness = 15;
-
-		sec = rtc_sec_bcd() >> 4;
-
-		if (sec == 3) {
-			matrix_set_digit(0, RGB_DATE, date / 10);
-			matrix_set_digit(1, RGB_DATE, date % 10);
-			matrix_set_digit(2, RGB_DATE, month / 10);
-			matrix_set_digit(3, RGB_DATE, month % 10);
-
-			matrix_dot(7, 6, RGB_DATE_DOT);
-
-			sec_color = RGB_DATE_SEC;
-			sec_bg = RGB_DATE_SEC_BACKGROUND;
-		} else {
-			matrix_set_digit(0, RGB_TIME, hour / 10);
-			matrix_set_digit(1, RGB_TIME, hour % 10);
-			matrix_set_digit(2, RGB_TIME, rtc_min_bcd() >> 4);
-			matrix_set_digit(3, RGB_TIME, rtc_min_bcd() & 0x0f);
-
-			if (rtc_sec_bcd() & 1) {
-				matrix_dot(7, 2, RGB_TIME_DOT);
-				matrix_dot(7, 4, RGB_TIME_DOT);
-			}
-
-			sec_color = RGB_TIME_SEC;
-			sec_bg = RGB_TIME_SEC_BACKGROUND;
-		}
-
-		while (sec > s) {
-			matrix_dot(s++, 7, sec_color);
-		}
-
-		while (s < 5) {
-			matrix_dot(s++, 7, sec_bg);
-		}
-
-		s = 6;
-		sec = (rtc_sec_bcd() & 0x0f) + 6;
-
-		while (sec > s) {
-			matrix_dot(s++, 7, sec_color);
-		}
-
-		while (s < 15) {
-			matrix_dot(s++, 7, sec_bg);
-		}
 	}
+
+	sec = rtc_sec_bcd();
+
+	if (sec == 0x30) {
+		/* date display mode for seconds 30..39 */
+
+		matrix_set_digit(0, RGB_DATE, date / 10);
+		matrix_set_digit(1, RGB_DATE, date % 10);
+		matrix_set_digit(2, RGB_DATE, month / 10);
+		matrix_set_digit(3, RGB_DATE, month % 10);
+	} else if (sec == 0x40 || last_hour == 24) {
+		/* time display mode */
+		
+		matrix_set_digit(0, RGB_TIME, hour / 10);
+		matrix_set_digit(1, RGB_TIME, hour % 10);
+		matrix_set_digit(2, RGB_TIME, rtc_min_bcd() >> 4);
+		matrix_set_digit(3, RGB_TIME, rtc_min_bcd() & 0x0f);
+	}
+
+	last_hour = hour;
 }
