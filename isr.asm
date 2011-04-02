@@ -54,6 +54,7 @@ matrix_init
 	movwf	SSPCON1;
 	bsf	SSPCON1, SSPEN
 	bsf	PIE1, SSPIE
+	bsf	IPR1, SSP1IP
 
 	return
 

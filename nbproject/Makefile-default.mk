@@ -30,7 +30,7 @@ OBJECTDIR=build/${CND_CONF}/${IMAGE_TYPE}
 DISTDIR=dist/${CND_CONF}/${IMAGE_TYPE}
 
 # Object Files
-OBJECTFILES=${OBJECTDIR}/rgbmatrix_digits.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/rgbmatrix.o ${OBJECTDIR}/calendar.o ${OBJECTDIR}/isr.o ${OBJECTDIR}/main.o
+OBJECTFILES=${OBJECTDIR}/btn.o ${OBJECTDIR}/rgbmatrix_digits.o ${OBJECTDIR}/rtc.o ${OBJECTDIR}/rgbmatrix.o ${OBJECTDIR}/calendar.o ${OBJECTDIR}/isr.o ${OBJECTDIR}/main.o
 
 
 CFLAGS=
@@ -87,6 +87,16 @@ endif
 # ------------------------------------------------------------------------------------
 # Rules for buildStep: assemble
 ifeq ($(TYPE_IMAGE), DEBUG_RUN)
+.PHONY: ${OBJECTDIR}/btn.o
+${OBJECTDIR}/btn.o: btn.asm __revgrep__ nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR} 
+ifneq (,$(findstring MINGW32,$(OS_CURRENT))) 
+	-${MP_AS}  -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p18F45J10  -l"${OBJECTDIR}/btn.lst" -e"${OBJECTDIR}/btn.err" $(ASM_OPTIONS)  -o"${OBJECTDIR}/btn.o" btn.asm 
+else 
+	-${MP_AS}  -d__DEBUG -d__MPLAB_DEBUGGER_PK3=1 -q -p18F45J10 -u  -l"${OBJECTDIR}/btn.lst" -e"${OBJECTDIR}/btn.err" $(ASM_OPTIONS)  -o"${OBJECTDIR}/btn.o" btn.asm 
+endif 
+	@cat  "${OBJECTDIR}/btn.err" | sed -e 's/\x0D$$//' -e 's/\(^Warning\|^Error\|^Message\)\(\[[0-9]*\]\) *\(.*\) \([0-9]*\) : \(.*$$\)/\3:\4: \1\2: \5/g'
+	@./__revgrep__ "^Error" ${OBJECTDIR}/btn.err
 .PHONY: ${OBJECTDIR}/isr.o
 ${OBJECTDIR}/isr.o: isr.asm __revgrep__ nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} ${OBJECTDIR} 
@@ -98,6 +108,16 @@ endif
 	@cat  "${OBJECTDIR}/isr.err" | sed -e 's/\x0D$$//' -e 's/\(^Warning\|^Error\|^Message\)\(\[[0-9]*\]\) *\(.*\) \([0-9]*\) : \(.*$$\)/\3:\4: \1\2: \5/g'
 	@./__revgrep__ "^Error" ${OBJECTDIR}/isr.err
 else
+.PHONY: ${OBJECTDIR}/btn.o
+${OBJECTDIR}/btn.o: btn.asm __revgrep__ nbproject/Makefile-${CND_CONF}.mk
+	${MKDIR} ${OBJECTDIR} 
+ifneq (,$(findstring MINGW32,$(OS_CURRENT))) 
+	-${MP_AS}  -q -p18F45J10  -l"${OBJECTDIR}/btn.lst" -e"${OBJECTDIR}/btn.err" $(ASM_OPTIONS)  -o"${OBJECTDIR}/btn.o" btn.asm 
+else 
+	-${MP_AS}  -q -p18F45J10 -u  -l"${OBJECTDIR}/btn.lst" -e"${OBJECTDIR}/btn.err" $(ASM_OPTIONS)  -o"${OBJECTDIR}/btn.o" btn.asm 
+endif 
+	@cat  "${OBJECTDIR}/btn.err" | sed -e 's/\x0D$$//' -e 's/\(^Warning\|^Error\|^Message\)\(\[[0-9]*\]\) *\(.*\) \([0-9]*\) : \(.*$$\)/\3:\4: \1\2: \5/g'
+	@./__revgrep__ "^Error" ${OBJECTDIR}/btn.err
 .PHONY: ${OBJECTDIR}/isr.o
 ${OBJECTDIR}/isr.o: isr.asm __revgrep__ nbproject/Makefile-${CND_CONF}.mk
 	${MKDIR} ${OBJECTDIR} 

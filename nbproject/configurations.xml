@@ -4,6 +4,7 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
+      <itemPath>button.h</itemPath>
       <itemPath>calendar.h</itemPath>
       <itemPath>rgbmatrix.h</itemPath>
       <itemPath>rtc.h</itemPath>
@@ -23,6 +24,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>btn.asm</itemPath>
       <itemPath>calendar.c</itemPath>
       <itemPath>isr.asm</itemPath>
       <itemPath>main.c</itemPath>

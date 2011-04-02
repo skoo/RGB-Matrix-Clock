@@ -24,6 +24,7 @@
 #include "rgbmatrix.h"
 #include "rtc.h"
 #include "calendar.h"
+#include "button.h"
 
 #pragma config STVREN	= ON
 #pragma config XINST	= OFF
@@ -49,13 +50,21 @@
 #define RGB(r,g,b) ((r<<2)|(g<<1)|b)
 
 #pragma code high_vector=0x08
-
 void interrupt_at_high_vector(void)
 {
 	_asm
 	GOTO matrix_irq
 	_endasm
 }
+
+#pragma code low_vector=0x18
+void interrupt_at_low_vector(void)
+{
+	_asm
+	GOTO button_irq
+	_endasm
+}
+
 #pragma code
 
 void main(void)
@@ -84,6 +93,8 @@ void main(void)
 	matrix_init();
 	matrix_init_fb();
 
+	button_init();
+
 	rtc_init();
 
 #if defined(SET_CLOCK)
@@ -92,7 +103,9 @@ void main(void)
 
 	matrix_brightness = 15;
 
-	INTCONbits.GIE = 1;
+	RCONbits.IPEN = 1;	// enable interrupt priority
+	INTCONbits.GIEH = 1;	// enable hi priority interrupts
+	INTCONbits.GIEL = 1;	// enable low priority interrupts
 	INTCONbits.PEIE = 1;
 
 	matrix_start();
@@ -192,8 +205,5 @@ void main(void)
 		while (s < 15) {
 			matrix_dot(s++, 7, sec_bg);
 		}
-
-		Delay10KTCYx(10);
-
 	}
 }
