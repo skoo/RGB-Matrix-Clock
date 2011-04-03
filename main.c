@@ -73,8 +73,6 @@ static char adjust_time(void);
 
 void main(void)
 {
-	OSCTUNEbits.PLLEN = 1;
-
 #if defined(SET_CLOCK)
 	/* No method for setting rtc at run time.
 	 * Compile with SET_CLOCK and call enabled
@@ -83,14 +81,16 @@ void main(void)
 
 	static const unsigned char rtcdata[8] = {
 		0x00, // sec
-		0x42, // min
-		0x14, // hour (24 hour format)
-		0x05, // day of week (01-07, 1=monday)
-		0x31, // date
-		0x03, // month
+		0x46, // min
+		0x08, // hour (24 hour format)
+		0x07, // day of week (01-07, 1=monday)
+		0x03, // date
+		0x04, // month
 		0x11, // year
 	};
 #endif
+
+	OSCTUNEbits.PLLEN = 1;
 
 	matrix_init();
 	matrix_init_fb();
@@ -264,28 +264,31 @@ char adjust_time(void)
 	static unsigned char dec_len = 0;
 	static unsigned char inc_len = 0;
 
-	if (button_dec > dec_len)
+	if (button_dec != dec_len)
 		dec_len = button_dec;
-
-	if (button_inc > inc_len)
+	else if (button_inc != inc_len)
 		inc_len = button_inc;
+	else
+		return;
 
-	if (button_dec < dec_len || button_inc < inc_len) {
+	dec_len %= 60;
+	inc_len %= 60;
+
+	if (dec_len > 0 || inc_len > 0) {
 		char sec = BCD_TO_DEC(rtc_sec_bcd());
 		char min = BCD_TO_DEC(rtc_min_bcd());
 		char hour = BCD_TO_DEC(rtc_hour_bcd());
 
-		if (button_dec < dec_len) {
-			sec--;
-			dec_len = 0;
+		if (dec_len > 0) {
+			sec -= dec_len;
 		}
-		if (button_inc < inc_len) {
-			sec++;
-			inc_len = 0;
+
+		if (inc_len > 0) {
+			sec += inc_len;
 		}
 
 		if (sec < 0) {
-			sec = 59;
+			sec += 60;
 			min--;
 			if (min < 0) {
 				min = 59;
@@ -294,7 +297,7 @@ char adjust_time(void)
 					hour = 23;
 			}
 		} else if (sec > 59) {
-			sec = 0;
+			sec -= 60;
 			min++;
 			if (min > 59) {
 				min = 0;
