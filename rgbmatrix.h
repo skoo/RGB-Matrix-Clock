@@ -20,4 +20,7 @@ void matrix_dot(
 	unsigned char y,
 	unsigned char c);
 
+#define DIGIT_3X7(x) (x)
+#define DIGIT_3X5(x) (10+(x))
+
 #endif // _RGBMATRIX_H_

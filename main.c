@@ -37,13 +37,13 @@
 
 #define RGB_TIME		RGB(1,0,0)
 #define RGB_TIME_SEC		RGB(1,1,1)
-#define RGB_TIME_SEC_BACKGROUND RGB(1,1,0)
+#define RGB_TIME_SEC_BACKGROUND RGB(0,0,0)
 #define RGB_TIME_DOT		RGB(1,1,0)
 
 #define RGB_DATE 		RGB(0,0,1)
-#define RGB_DATE_SEC		RGB(0,1,1)
-#define RGB_DATE_SEC_BACKGROUND RGB(1,0,1)
-#define RGB_DATE_DOT		RGB(1,0,1)
+#define RGB_DATE_SEC		RGB(1,1,1)
+#define RGB_DATE_SEC_BACKGROUND RGB(0,0,0)
+#define RGB_DATE_DOT		RGB(1,1,0)
 
 // #define SET_CLOCK
 
@@ -148,7 +148,7 @@ void draw_second_markers(void)
 
 	if (sec == 3) {
 		/* date display mode for seconds 30..39 */
-		matrix_dot(7, 6, RGB_DATE_DOT);
+		matrix_dot(7, 5, RGB_DATE_DOT);
 		sec_color = RGB_DATE_SEC;
 		sec_bg = RGB_DATE_SEC_BACKGROUND;
 	} else {
@@ -234,17 +234,17 @@ void draw_digits(char force_update)
 	if (sec == 0x30 && !force_update) {
 		/* date display mode for seconds 30..39 */
 
-		matrix_set_digit(0, RGB_DATE, date / 10);
-		matrix_set_digit(1, RGB_DATE, date % 10);
-		matrix_set_digit(2, RGB_DATE, month / 10);
-		matrix_set_digit(3, RGB_DATE, month % 10);
-	} else if (sec == 0x40 || force_update) {
+		matrix_set_digit(0, RGB_DATE, DIGIT_3X5(date / 10));
+		matrix_set_digit(1, RGB_DATE, DIGIT_3X5(date % 10));
+		matrix_set_digit(2, RGB_DATE, DIGIT_3X5(month / 10));
+		matrix_set_digit(3, RGB_DATE, DIGIT_3X5(month % 10));
+	} else if (sec == 0x00 || sec == 0x40 || force_update) {
 		/* time display mode */
 		
-		matrix_set_digit(0, RGB_TIME, hour / 10);
-		matrix_set_digit(1, RGB_TIME, hour % 10);
-		matrix_set_digit(2, RGB_TIME, rtc_min_bcd() >> 4);
-		matrix_set_digit(3, RGB_TIME, rtc_min_bcd() & 0x0f);
+		matrix_set_digit(0, RGB_TIME, DIGIT_3X7(hour / 10));
+		matrix_set_digit(1, RGB_TIME, DIGIT_3X7(hour % 10));
+		matrix_set_digit(2, RGB_TIME, DIGIT_3X7(rtc_min_bcd() >> 4));
+		matrix_set_digit(3, RGB_TIME, DIGIT_3X7(rtc_min_bcd() & 0x0f));
 	}
 
 	last_hour = hour;
