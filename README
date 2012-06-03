@@ -3,7 +3,7 @@ RGB Matrix Clock
 MPLAB X project for Microchip 18f45j10,
 DS1307 & Paeae 595 matrix kit based clock.
 
-The code is for clock contains following components:
+This code is for clock containing following components:
 
 - 2 pieces of 8x8 RGB LED matrix
   (http://kits.paeae.com/595matrix/)
